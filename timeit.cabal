@@ -22,7 +22,8 @@ Executable timeit
    Main-Is:          Main.hs
    hs-source-dirs:   src
 
-   Build-depends:    base >= 4.6 && <= 6,
-                     process
+   Build-depends:    base >= 4.7 && <= 6,
+                     process,
+                     time
 
    ghc-options:      -Wall -rtsopts

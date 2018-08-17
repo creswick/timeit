@@ -1,6 +1,7 @@
 module Main where
 
 import Data.Time.Clock
+import Data.List
 import System.Environment
 import System.Process
 
@@ -8,24 +9,26 @@ main :: IO ()
 main = do
   args <- parseArgs
   start <- getCurrentTime
-  createProcess $ shell $ command args
+  (_,_,_,hdl) <- createProcess $ shell $ command args
+  _exit <- waitForProcess hdl
   end <- getCurrentTime
 
   saveTiming args $ diffUTCTime end start
 
-saveTiming :: Arguments -> Int -> IO ()
+saveTiming :: Arguments -> NominalDiffTime -> IO ()
 saveTiming args theTime =
-  writeFile (storage args) (show theTime ++ ", " ++ command args ++ "\n")
+  appendFile (storage args)
+    (show (round (theTime * 1000)) ++ ", " ++ command args ++ "\n")
 
 parseArgs :: IO Arguments
 parseArgs = do
   args <- getArgs
-  Args { command = args
-       , storage = "/tmp/timings"
-       }
+  return Args { command = intercalate " " args
+              , storage = "/home/rogan/.timings.csv"
+              }
 
 -- | Command line arguments.
 data Arguments = Args
-  { command :: [String]
+  { command :: String
   , storage :: FilePath
   } deriving (Read, Show, Ord, Eq)

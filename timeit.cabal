@@ -24,6 +24,8 @@ Executable timeit
 
    Build-depends:    base >= 4.7 && <= 6,
                      process,
-                     time
+                     time,
+                     filepath,
+                     directory
 
    ghc-options:      -Wall -rtsopts

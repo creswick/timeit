@@ -2,7 +2,9 @@ module Main where
 
 import Data.Time.Clock
 import Data.List
+import System.Directory
 import System.Environment
+import System.FilePath
 import System.Process
 
 main :: IO ()
@@ -23,8 +25,9 @@ saveTiming args theTime =
 parseArgs :: IO Arguments
 parseArgs = do
   args <- getArgs
+  homeDir <- getHomeDirectory
   return Args { command = intercalate " " args
-              , storage = "/home/rogan/.timings.csv"
+              , storage = homeDir </> ".timings.csv"
               }
 
 -- | Command line arguments.

@@ -1,5 +1,5 @@
 name:                timeit
-version:             0.0.0.2
+version:             0.0.0.3
 synopsis:            retrospective timing utility
 description:         Tracks how long things run.
 homepage:            http://github.com/creswick/timeit

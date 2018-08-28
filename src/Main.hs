@@ -7,6 +7,7 @@ import Data.Configurator
 
 import System.Directory
 import System.Environment
+import System.Exit
 import System.FilePath
 import System.Process
 
@@ -16,10 +17,11 @@ main = do
   conf <- loadConfiguration
   start <- getCurrentTime
   (_,_,_,hdl) <- createProcess $ shell $ command args
-  _exit <- waitForProcess hdl
+  exitCode <- waitForProcess hdl
   end <- getCurrentTime
 
   saveTiming conf args $ diffUTCTime end start
+  exitWith exitCode
 
 saveTiming :: Configuration -> Arguments -> NominalDiffTime -> IO ()
 saveTiming conf args theTime =

@@ -17,16 +17,71 @@ source-repository head
   type:     git
   location: git://github.com/creswick/timeit.git
 
-Executable timeit
+Library
    default-language: Haskell2010
-   Main-Is:          Main.hs
    hs-source-dirs:   src
+
+   Exposed-modules:  Storage
+                     Types
+                     Histogram
+                     Render
 
    Build-depends:    base >= 4.7 && <= 6,
                      process,
                      time,
                      filepath,
                      directory,
-                     configurator
+                     configurator,
+                     containers,
+                     cassava,
+                     bytestring,
+                     vector,
+                     statistics,
+                     MissingH,
+                     pretty
+
+   ghc-options:      -Wall
+
+Executable timeit
+   default-language: Haskell2010
+   Main-Is:          Main.hs
+   hs-source-dirs:   appsrc
+
+   Build-depends:    base >= 4.7 && <= 6,
+                     process,
+                     time,
+                     filepath,
+                     directory,
+                     configurator,
+                     containers,
+                     cassava,
+                     bytestring,
+                     vector,
+                     statistics,
+                     MissingH,
+                     pretty
+
+   ghc-options:      -Wall -rtsopts
+
+test-suite tests
+   default-language: Haskell2010
+   type: exitcode-stdio-1.0
+
+   Main-Is:          Main.hs
+   hs-source-dirs:   tests
+
+   Other-modules:    Generators
+
+   build-depends:    base,
+                     timeit,
+                     QuickCheck,
+                     quickcheck-instances,
+                     containers,
+                     time,
+                     bytestring,
+                     statistics,
+                     MissingH,
+                     pretty,
+                     timeit
 
    ghc-options:      -Wall -rtsopts

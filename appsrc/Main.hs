@@ -10,6 +10,11 @@ import System.Environment
 import System.Exit
 import System.FilePath
 import System.Process
+import Text.PrettyPrint
+
+import Types
+import Storage
+import Render
 
 main :: IO ()
 main = do
@@ -19,14 +24,16 @@ main = do
   (_,_,_,hdl) <- createProcess $ shell $ command args
   exitCode <- waitForProcess hdl
   end <- getCurrentTime
-
-  saveTiming conf args $ diffUTCTime end start
+  let duration = diffUTCTime end start
+  saveTiming conf (RunInfo (command args) duration)
+  runInfo <- loadTiming conf
+  reportStats (duration, statsForCommand $ timesForCommand (command args) runInfo)
   exitWith exitCode
 
-saveTiming :: Configuration -> Arguments -> NominalDiffTime -> IO ()
-saveTiming conf args theTime =
-  appendFile (storage conf)
-    (show (round (theTime * 1000)) ++ ", " ++ command args ++ "\n")
+reportStats :: (NominalDiffTime, Stats) -> IO ()
+reportStats (thisRun, stats) = do
+  putStr (render $ renderStats (thisRun, stats))
+
 
 parseArgs :: IO Arguments
 parseArgs = do
@@ -34,17 +41,6 @@ parseArgs = do
   return Args { command = intercalate " " args
               , verbose = False
               }
-
--- | Command line arguments.
-data Arguments = Args
-  { command :: String
-  , verbose :: Bool
-  } deriving (Read, Show, Ord, Eq)
-
--- | Command line arguments.
-data Configuration = Configuration
-  { storage :: FilePath
-  } deriving (Read, Show, Ord, Eq)
 
 loadConfiguration :: IO Configuration
 loadConfiguration = do

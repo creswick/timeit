@@ -48,6 +48,7 @@ Executable timeit
    hs-source-dirs:   appsrc
 
    Build-depends:    base >= 4.7 && <= 6,
+                     timeit,
                      process,
                      time,
                      filepath,

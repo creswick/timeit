@@ -11,8 +11,8 @@ data Histogram = Histogram
 
 mkHistogram :: [Double] -> Histogram
 mkHistogram xs =
-  let cols = 80
-      rows = 5
+  let cols = 40
+      rows = 6
       bucketed = toBuckets cols xs
       histData = foldr (\x acc -> Map.insertWith (+) x 1 acc) Map.empty bucketed
 
@@ -36,7 +36,7 @@ toBuckets count xs =
   in map scale xs
 
 toStrings :: Histogram -> Maybe Int -> [String]
-toStrings (Histogram rows cols dat) mPoint =
+toStrings (Histogram rows cols dat) _mPoint =
   map (renderRow cols)
   [ Map.keys $ Map.filter (>= r) dat
   | r <- reverse [1..rows]

@@ -5,6 +5,8 @@ import Data.Time.Clock
 import Data.List
 import Data.Configurator
 
+
+import Prelude hiding ((<>))
 import System.Directory
 import System.Environment
 import System.Exit
@@ -15,6 +17,7 @@ import Text.PrettyPrint
 import Types
 import Storage
 import Render
+import Histogram
 
 main :: IO ()
 main = do
@@ -27,12 +30,14 @@ main = do
   let duration = diffUTCTime end start
   saveTiming conf (RunInfo (command args) duration)
   runInfo <- loadTiming conf
-  reportStats (duration, statsForCommand $ timesForCommand (command args) runInfo)
+  reportStats (duration, timesForCommand (command args) runInfo)
   exitWith exitCode
 
-reportStats :: (NominalDiffTime, Stats) -> IO ()
-reportStats (thisRun, stats) = do
-  putStr (render $ renderStats (thisRun, stats))
+reportStats :: (NominalDiffTime, [NominalDiffTime]) -> IO ()
+reportStats (thisRun, times) = do
+  let stats = statsForCommand times
+  putStrLn ""
+  putStrLn (render (blockBeside (renderStats (thisRun, stats)) (renderHistogram (mkHistogram (map realToFrac times)))))
 
 
 parseArgs :: IO Arguments
